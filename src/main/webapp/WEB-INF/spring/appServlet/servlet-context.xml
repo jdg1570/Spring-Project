@@ -30,15 +30,21 @@
 	
 	<beans:bean id="memberInterceptor" class="com.spring.cjs2108_jdg.interceptor.MemberInterceptor"/>
 	<beans:bean id="boardInterceptor" class="com.spring.cjs2108_jdg.interceptor.BoardInterceptor"/>
+	<beans:bean id="mybookInterceptor" class="com.spring.cjs2108_jdg.interceptor.MybookInterceptor"/>
 	<interceptors>
 		<interceptor>
 			<mapping path="/member/MemberUpdate"/>
 			<mapping path="/member/MemberOut"/>
+			<mapping path="/member/Main"/>
 			<beans:ref bean="memberInterceptor"/>
 		</interceptor>
 		<interceptor>
 		    <mapping path="/board/**"/>
 		    <beans:ref bean="boardInterceptor"/>
+	 	</interceptor> 
+		<interceptor>
+		    <mapping path="/mybook/**"/>
+		    <beans:ref bean="mybookInterceptor"/>
 	 	</interceptor> 
 	</interceptors>
 		<!-- 파일 업로드를 위한 용량 제한설정 -->
