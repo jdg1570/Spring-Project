@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_jdg.dao.AdminDAO">
+
+	<insert id="setProductInput">
+		insert into books values (default,#{vo.bookName},default,default,default,#{vo.bookAuthor},#{vo.publisher},#{vo.publiDate},#{vo.bookType},#{vo.bookContent},#{vo.bookContent2},#{vo.bookText});
+	</insert>
+	
+	<select id="totRecCnt" resultType="int">
+		<choose>
+			<when test="bookType=='전체' and bookName == null">
+				select count(*) from books;
+			</when>
+			<when test="bookType=='전체' and bookName != null">
+				select count(*) from books where bookName like concat('%',#{bookName},'%');
+			</when>
+			<when test="bookType!='전체' and bookName == null">
+				select count(*) from books where bookType=#{bookType};
+			</when>
+			<otherwise>
+				select count(*) from books where bookType=#{bookType} and bookName like concat('%',#{bookName},'%');
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="getProductList" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		<choose>
+			<when test="bookType =='전체' and bookName == null">
+				select * from books order by bookIdx desc limit #{startIndexNo},#{pageSize};
+			</when>
+			<when test="bookType =='전체' and bookName != null">
+				select * from books where bookName like concat('%',#{bookName},'%') order by bookIdx desc limit #{startIndexNo},#{pageSize};
+			</when>
+			<when test="bookType !='전체' and bookName == null">
+				select * from books where bookType=#{bookType} order by bookIdx desc limit #{startIndexNo},#{pageSize};
+			</when>
+			<otherwise>
+				select * from books where bookType=#{bookType} and bookName like concat('%',#{bookName},'%') order by bookIdx desc limit #{startIndexNo},#{pageSize};
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<delete id="setProductDelete">
+		delete from books where bookIdx = #{idx};
+	</delete>
+
+	<delete id="setReplyDelete">
+		delete from bookReview where idx = #{idx};
+	</delete>
+
+	<select id="setIdxCheck"
+		resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		select * from books where bookIdx=#{bookIdx};
+	</select>
+
+	<update id="setProductUpdate">
+		update books set bookName=#{vo.bookName},bookAuthor=#{vo.bookAuthor},publisher=#{vo.publisher},publiDate=#{vo.publiDate},bookType=#{vo.bookType},bookContent=#{vo.bookContent},bookContent2=#{vo.bookContent2},bookText=#{vo.bookText},updateDate=now() where bookIdx=#{vo.bookIdx};
+	</update>
+
+
+	<select id="totRecCnt2" resultType="int">
+		<choose>
+			<when test="level ==99 and mid == null">
+				select count(*) from member;
+			</when>
+			<when test="level !=99 and mid != null">
+				select count(*) from member where level = #{level} and mid like concat('%',#{mid},'%');
+			</when>
+			<when test="level ==99 and mid != null">
+				select count(*) from member where mid like concat('%',#{mid},'%');
+			</when>
+			<otherwise>
+				select count(*) from member where level = #{level};
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="getMemberList" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		<choose>
+			<when test="level ==99 and mid == null">
+				select * from member order by idx desc limit #{startIndexNo},#{pageSize};
+			</when>
+			<when test="level !=99 and mid != null">
+				select * from member where level = #{level} and mid like concat('%',#{mid},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+			</when>
+			<when test="level ==99 and mid != null">
+				select * from member where mid like concat('%',#{mid},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+			</when>
+			<otherwise>
+				select * from member where level = #{level} order by idx desc limit #{startIndexNo},#{pageSize};
+			</otherwise>
+		</choose>
+	</select>
+
+	<update id="setLevelUpdate">
+		update member set level = #{level} where idx = #{idx};
+	</update>
+
+	<select id="getBestList" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		select * from books order by readNum desc limit 8;
+	</select>
+
+	<select id="getRecommendList" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+	<if test="interest == ''">
+		select * from books order by rand() limit 7;
+	</if>
+	<if test="interest != '없음'">
+		select * from books where bookType=#{interest} order by rand() limit 7;
+	</if>
+	</select>
+
+	<select id="getRelevantList" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		select * from books where bookType=#{bookType} and bookIdx != #{bookIdx} order by rand() limit 5;
+	</select>
+
+	<select id="getNewList" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		select * from books order by publiDate desc limit 8;
+	</select>
+
+	<insert id="setReviewInsert">
+		insert into bookReview values (default,#{bvo.bookIdx},#{bvo.nickName},default,#{bvo.content},default);
+	</insert>
+
+	<select id="getBookReview" resultType="com.spring.cjs2108_jdg.vo.BookReviewVO">
+		select *, (select likeSw from reviewLike where nickName=#{nickName} and reviewIdx=bookReview.idx) as likeSw,
+        (select likeCnt from reviewLike where nickName=#{nickName} and reviewIdx=bookReview.idx) as likeCnt,
+        (select sum(likeCnt) from reviewLike where reviewIdx=bookReview.idx) as likeSum from bookReview 
+        where bookIdx=#{bookIdx} order by idx;
+	</select>
+
+	<select id="getReviewCnt" resultType="int">
+		select count(*) from bookReview where bookIdx=#{bookIdx};
+	</select>
+
+	<delete id="ReviewDelete">
+		delete from bookReview where idx=#{reviewIdx};
+	</delete>
+
+	<update id="addGood">
+		update bookReview set likeNum=likeNum + #{flag} where idx = #{reviewIdx};
+	</update>
+
+	<!-- 한번에 가져오려고 만든 쿼리문, 사용은 하지 않음 <select id="totReplyCnt" resultType="int"> 
+		select ((select count(*) from bookReview)+(select count(*) from eventReply)); 
+		</select> <select id="getEventReply" resultType="com.spring.cjs2108_jdg.vo.BookReviewVO"> 
+		select a.idx ,a.nickName, a.wDate, a.content from bookReview as a union select 
+		b.idx,b.nickName, b.wDate, b.content from eventReply as b order by idx limit 
+		#{startIndexNo},#{pageSize}; </select> -->
+
+	<select id="totReviewCnt" resultType="int">
+		<if test="nickName == null">
+			select count(*) from bookReview limit #{pageSize};
+		</if>
+		<if test="nickName != null">
+			select count(*) from bookReview where nickName like concat('%',#{nickName},'%') limit #{pageSize};
+		</if>
+	</select>
+	<select id="getBookReply" resultType="com.spring.cjs2108_jdg.vo.BookReviewVO">
+		<if test="nickName == null">
+			select * from bookReview order by idx desc limit #{startIndexNo},#{pageSize};
+		</if>
+		<if test="nickName != null">
+			select * from bookReview where nickName like concat('%',#{nickName},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+		</if>
+	</select>
+
+	<select id="totEventCnt" resultType="int">
+		<if test="nickName == null">
+			select count(*) from eventReply limit #{pageSize};
+		</if>
+		<if test="nickName != null">
+			select count(*) from eventReply where nickName like concat('%',#{nickName},'%') limit #{pageSize};
+		</if>
+	</select>
+	
+	<select id="getEventReply" resultType="com.spring.cjs2108_jdg.vo.EventReplyVO">
+		<if test="nickName == null">
+			select * from eventReply order by idx desc limit #{startIndexNo},#{pageSize};
+		</if>
+		<if test="nickName != null">
+			select * from eventReply where nickName like concat('%',#{nickName},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+		</if>
+	</select>
+
+	<select id="myBookSearch" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select * from mybooks where bookName=#{bookName} and nickName = #{nickName};
+	</select>
+
+	<insert id="myBookInput">
+		insert into mybooks values (default,#{vo.bookIdx},#{vo.bookName},#{vo.bookAuthor},#{vo.bookContent},#{vo.nickName},default,default,#{vo.bookType},default,#{vo.bookText},default);
+	</insert>
+	
+	<select id="btotRecCnt" resultType="int">
+		 <if test="part =='전체'">
+			<if test="nickName == null">
+				select count(*) from board;
+			</if>
+			<if test="nickName != null">
+				select count(*) from board where nickName like concat('%',#{nickName},'%');
+			</if>
+		</if>
+		<if test="part !='전체'">
+			<if test="nickName == null">
+				select count(*) from board where part=#{part};
+			</if>
+			<if test="nickName != null">
+				select count(*) from board where part=#{part} and nickName like concat('%',#{nickName},'%');
+			</if>
+		</if>
+	</select>
+
+	<select id="getBoardList" resultType="com.spring.cjs2108_jdg.vo.BoardVO">
+		 <if test="part =='전체'">
+			<if test="nickName == null">
+				select * from board order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+			<if test="nickName != null">
+				select * from board where nickName like concat('%',#{nickName},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+		</if>
+		 <if test="part !='전체'">
+			<if test="nickName == null">
+				select * from board where part=#{part} order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+			<if test="nickName != null">
+				select * from board where part=#{part} and nickName like concat('%',#{nickName},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+		</if>
+	</select>
+	
+	<delete id="setBoardDelete">
+		delete from board where idx=#{idx};
+	</delete>
+	
+	<select id="totBoardCnt" resultType="int">
+		<if test="nickName == null">
+			select count(*) from boardReply limit #{pageSize};
+		</if>
+		<if test="nickName != null">
+			select count(*) from boardReply where nickName like concat('%',#{nickName},'%') limit #{pageSize};
+		</if>
+	</select>
+	
+	<select id="getBoardReply" resultType="com.spring.cjs2108_jdg.vo.BoardReplyVO">
+		<if test="nickName == null">
+			select * from boardReply order by idx desc limit #{startIndexNo},#{pageSize};
+		</if>
+		<if test="nickName != null">
+			select * from boardReply where nickName like concat('%',#{nickName},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+		</if>
+	</select>
+	
+	<select id="getMybookCount" resultType="int">
+		select count(#{bookIdx}) from books as b left join mybooks mb on b.bookIdx=mb.bookIdx where mb.bookIdx=#{bookIdx};
+	</select>
+	
+	<select id="getAddList" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select mb.idx, mb.nickName, mb.bookDate from books as b left join mybooks mb on b.bookIdx=mb.bookIdx where mb.bookIdx=#{bookIdx} group by mb.nickName;
+	</select>
+	
+	<select id="getBookType" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		select bookType, count(*) as bcnt from books group by bookType order by bcnt desc;
+	</select>
+	
+	<select id="getPopularType" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select bookType, count(*) as ocnt from mybooks where bookDate != readDate group by bookType order by bookType desc;
+	</select>
+	
+	<select id="getReadRank" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select bookName, count(bookName) as rcnt from mybooks where mybooks.read='YES' group by bookName order by rcnt desc limit 10;
+	</select>
+	
+	<select id="itotRecCnt" resultType="int">
+		 <if test="part =='전체'">
+			<if test="nickName == null">
+				select count(*) from inquiry;
+			</if>
+			<if test="nickName != null">
+				select count(*) from inquiry where nickName like concat('%',#{nickName},'%');
+			</if>
+		</if>
+		<if test="part !='전체'">
+			<if test="nickName == null">
+				select count(*) from inquiry where part=#{part};
+			</if>
+			<if test="nickName != null">
+				select count(*) from inquiry where part=#{part} and nickName like concat('%',#{nickName},'%');
+			</if>
+		</if>
+	</select>
+	
+	<select id="getInquiryList" resultType="com.spring.cjs2108_jdg.vo.InquiryVO">
+		select * from inquiry 
+		 <if test="part =='전체'">
+			<if test="nickName == null">
+				where reply='NO' order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+			<if test="nickName != null">
+				 where nickName like concat('%',#{nickName},'%') and reply='NO' order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+		</if>
+		 <if test="part !='전체'">
+			<if test="nickName == null">
+				 where part=#{part} and reply='NO' order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+			<if test="nickName != null">
+				 where part=#{part} and nickName like concat('%',#{nickName},'%') and reply='NO' order by idx desc limit #{startIndexNo},#{pageSize};
+			</if>
+		</if>
+	</select>
+	
+	<delete id="setInquiryDelete">
+		delete from inquiry where idx=#{idx};
+	</delete>
+	
+	<select id="getInquiryContent" resultType="com.spring.cjs2108_jdg.vo.InquiryVO">
+		select * from inquiry where idx=#{idx};
+	</select>
+	
+	<select id="maxLevelOrder2" resultType="String">
+		select max(levelOrder) from inquiryReply where inquiryIdx = #{inquiryIdx};
+	</select>
+	
+	<insert id="InquiryReplyInsert">
+		insert into inquiryReply values (default,#{rvo.inquiryIdx},#{rvo.nickName},default,#{rvo.content},default,#{rvo.levelOrder});
+	</insert>
+	
+	<update id="InquiryUpdate">
+		update inquiry set reply = 'YES' where idx=#{inquiryIdx};
+	</update>
+	
+	<select id="reviewSearch" resultType="com.spring.cjs2108_jdg.vo.ReviewLikeVO">
+		select * from reviewLike where reviewIdx=#{vo.reviewIdx} and nickName=#{vo.nickName};
+	</select>
+	
+	<insert id="likeInsert">
+		insert into reviewLike values (#{vo.reviewIdx},#{vo.nickName},default,default);
+	</insert>
+	
+	<update id="likeNumUpdate">
+		<if test="vo.likeSw != 1">
+			update reviewLike set likeCnt = likeCnt + 1 where reviewIdx=#{vo.reviewIdx} and nickName=#{vo.nickName};
+		</if>
+		<if test="vo.likeSw == 1">
+			update reviewLike set likeCnt = likeCnt - 1 where reviewIdx=#{vo.reviewIdx} and nickName=#{vo.nickName};
+		</if>
+	</update>
+	
+	<update id="likeUpdate">
+		update reviewLike set likeSw = likeSw * (-1) where reviewIdx=#{vo.reviewIdx} and nickName=#{vo.nickName};
+	</update>
+	
+	<delete id="memberOut">
+		delete from member where idx=#{idx};
+	</delete>
+	
+	<delete id="setBoardReplyDelete">
+		delete from boardReply where idx=#{idx};
+	</delete>
+	
+	<delete id="setEventReplyDelete">
+		delete from eventReply where idx=#{idx};
+	</delete>
+</mapper>

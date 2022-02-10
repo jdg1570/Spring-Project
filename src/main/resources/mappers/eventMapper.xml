@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_jdg.dao.EventsDAO">
+
+  <insert id="setEventinput">
+  	insert into events values (default,#{vo.eventTitle},#{vo.eventImage},default,#{vo.endDate},default,default,#{vo.eventContent})
+  </insert>
+  
+  <select id="totRecCnt" resultType="int">
+  	select count(*) from events;
+  </select>
+  
+  <select id="getEventList" resultType="com.spring.cjs2108_jdg.vo.EventVO">
+  	select * from events order by eventIdx desc limit #{startIndexNo}, #{pageSize};
+  </select>
+  
+  <select id="setIdxCheck" resultType="com.spring.cjs2108_jdg.vo.EventVO">
+  	select * from events where eventIdx=#{eventIdx};
+  </select>
+  
+  <update id="setEventUpdate">
+  	update events set eventTitle=#{vo.eventTitle},eventImage=#{vo.eventImage},endDate=#{vo.endDate},eventContent=#{vo.eventContent} where eventIdx=#{vo.eventIdx};
+  </update>
+  
+  <delete id="setEventDelete">
+  	delete from events where eventIdx=#{eventIdx};
+  </delete>
+  
+  <select id="getEventshow" resultType="com.spring.cjs2108_jdg.vo.EventVO">
+  	select * from events order by eventIdx desc;
+  </select>
+  
+  <select id="getEventContent" resultType="com.spring.cjs2108_jdg.vo.EventVO">
+  	select * from events where eventIdx=#{eventIdx};
+  </select>
+  
+  <select id="maxLevelOrder" resultType="String">
+  	select max(levelOrder) from eventReply where eventIdx=#{eventIdx};
+  </select>
+  
+  <insert id="setReplyInsert">
+  	insert into eventReply values (default,#{rvo.eventIdx},#{rvo.nickName},default,#{rvo.content},default,#{rvo.levelOrder});
+  </insert>
+  
+   <insert id="setReplyInsert2">
+  	insert into eventReply values (default,#{rvo.eventIdx},#{rvo.nickName},default,#{rvo.content},#{rvo.level},#{rvo.levelOrder});
+  </insert>
+  
+  <select id="getEventReply" resultType="com.spring.cjs2108_jdg.vo.EventReplyVO">
+  	select * from eventReply where eventIdx=#{eventIdx} order by levelOrder;
+  </select>
+  
+  <delete id="ReplyDelete">
+  	delete from eventReply where idx=#{replyIdx};
+  </delete>
+  
+  <update id="levelOrderUp">
+  	update eventReply set levelOrder = levelOrder + 1 where eventIdx=#{rvo.eventIdx} and levelOrder>#{rvo.levelOrder};
+  </update>
+  
+  <select id="getReplyCnt" resultType="int">
+  	select count(*) from eventReply where eventIdx=#{eventIdx};
+  </select>
+  
+</mapper>

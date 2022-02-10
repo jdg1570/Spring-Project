@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_jdg.dao.MemberDAO">
+	<select id="getIdCheck" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select * from member where mid = #{mid};
+	</select>
+	
+	<select id="getNickCheck" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select * from member where nickName=#{nickName};
+	</select>
+	
+	<insert id="setJoin">
+		insert into member values (default,#{vo.mid},#{vo.pwd},#{vo.nickName},#{vo.name},#{vo.gender},#{vo.birthday},#{vo.tel},#{vo.address},#{vo.email},#{vo.interest},default,default,default,default,default,default);
+	</insert>
+	
+	<select id="getIdSearch" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select * from member where email=#{toMail} and name=#{name};
+	</select>
+	
+	<select id="getPwdSearch" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select * from member where mid=#{mid} and email=#{toMail};
+	</select>
+	
+	<select id="getJoinPeriod" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select timestampdiff(day, startDate, now()) as diffTime from member where mid=#{mid};
+	</select>
+	
+	<update id="setPwdChange">
+		update member set pwd=#{pwd} where mid=#{mid};
+	</update>
+	
+	<select id="getLoginCheck" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select * from member where mid=#{mid};
+	</select>
+	
+	<update id="setVisitUpdate">
+		update member set lastDate = now() where mid=#{mid};
+	</update>
+	
+	<update id="setMemberUpdate">
+		update member set pwd=#{vo.pwd},nickName=#{vo.nickName},email=#{vo.email},tel=#{vo.tel},address=#{vo.address},birthday=#{vo.birthday},gender=#{vo.gender},interest=#{vo.interest},userInfor=#{vo.userInfor} where mid=#{vo.mid};
+	</update>
+	
+	<update id="setMemberOut">
+		update member set userDel = 'OK' where mid=#{mid};
+	</update>
+	
+	<select id="getMybookCount" resultType="int">
+		select count(*) from member as m inner join mybooks as mb on m.nickName=mb.nickName 
+		where mb.nickName=#{nickName};
+	</select>
+	
+	<select id="getReadCount" resultType="int">
+		select count(*) from member as m inner join mybooks as mb on m.nickName=mb.nickName 
+		where mb.nickName=#{nickName} and mb.read='YES';
+	</select>
+	
+	<select id="getNotCount" resultType="int">
+		select count(*) from member as m inner join mybooks as mb on m.nickName=mb.nickName 
+		where mb.nickName= #{nickName} and mb.bookDate=mb.readDate;
+	</select>
+	
+	<select id="getPoint" resultType="com.spring.cjs2108_jdg.vo.MemberVO">
+		select * from member where mid=#{mid};
+	</select>
+	
+	<select id="getIngCount" resultType="int">
+		select count(*) from member as m inner join mybooks as mb on m.nickName=mb.nickName 
+		where mb.nickName=#{nickName} and mb.bookDate!=mb.readDate and mb.read='NO';
+	</select>
+	
+	<select id="getIngBook" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select * from mybooks as mb inner join member as m on m.nickName=mb.nickName 
+		where mb.nickName=#{nickName} and mb.bookDate!=mb.readDate and mb.read='NO';
+	</select>
+	
+	<select id="getNotYetBook" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select * from member as m inner join mybooks as mb on m.nickName=mb.nickName 
+		where mb.nickName=#{nickName} and mb.bookDate=mb.readDate;
+	</select>
+	
+	<select id="getFinishBook" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+		select * from member as m inner join mybooks as mb on m.nickName=mb.nickName 
+		where mb.nickName=#{nickName} and mb.read='YES';
+	</select>
+	
+	<insert id="setInquiryInput">
+		insert into inquiry values(default, #{vo.nickName},#{vo.content},default,#{vo.part},default);
+	</insert>
+	
+	<select id="getMyInquiry" resultType="com.spring.cjs2108_jdg.vo.InquiryVO">
+		select * from inquiry where nickName=#{nickName} order by idx desc;
+	</select>
+	
+	<select id="getInquiryUpdate" resultType="com.spring.cjs2108_jdg.vo.InquiryVO">
+		select * from inquiry where idx=#{idx};
+	</select>
+	
+	<update id="setInquiryUpdate">
+		update inquiry set part=#{vo.part},content=#{vo.content},wDate=now() where idx=#{vo.idx};
+	</update>
+	
+	<select id="getMyBoard" resultType="int">
+		select count(*) from board where nickName=#{nickName};
+	</select>
+	
+	<select id="getMyReply" resultType="int">
+		select sum(member.rcnt) from (select count(*) as rcnt from boardReply where nickName=#{nickName} union all
+		select count(*) rcnt from eventReply where nickName=#{nickName})member;
+	</select>
+	
+	<select id="getMyReview" resultType="int">
+		select count(*) from bookReview where nickName=#{nickName};
+	</select>
+	
+	<select id="getMyBoardList" resultType="com.spring.cjs2108_jdg.vo.BoardVO">
+		select * from board where nickName=#{nickName};
+	</select>
+	
+	<select id="getMyReplyList" resultType="com.spring.cjs2108_jdg.vo.BoardReplyVO">
+		select * from boardReply where nickName=#{nickName};
+	</select>
+	
+	<select id="getMyEventReplyList" resultType="com.spring.cjs2108_jdg.vo.EventReplyVO">
+		select * from eventReply where nickName=#{nickName};
+	</select>
+	
+	<select id="getMyReviewList" resultType="com.spring.cjs2108_jdg.vo.BookReviewVO">
+		select * from bookReview where nickName=#{nickName};
+	</select>
+	
+	<select id="getMyAnswer" resultType="com.spring.cjs2108_jdg.vo.InquiryReplyVO">
+		select ir.inquiryIdx,ir.content,ir.wDate from inquiry 
+		as i inner join  inquiryReply as ir on i.nickName=ir.nickName where i.idx=ir.inquiryIdx;
+	</select>
+	
+	<delete id="InquiryDelete">
+		delete from inquiry where idx=#{idx};
+	</delete>
+	
+	<select id="LikeBoardList" resultType="com.spring.cjs2108_jdg.vo.BoardVO">
+		select b.idx, b.nickName,b.title,b.wDate from boardLike 
+		as bl inner join board as b on b.idx=bl.boardIdx where bl.nickName=#{nickName};
+	</select>
+	
+	<select id="getLikeReview" resultType="int">
+		select count(*) from reviewLike where nickName=#{nickName};
+	</select>
+	
+	<select id="LikeReviewList" resultType="com.spring.cjs2108_jdg.vo.BookReviewVO">
+		select b.idx,b.content,b.wDate,b.nickName from reviewLike 
+		as r inner join bookReview as b on b.idx = r.reviewIdx where r.reviewIdx = b.idx 
+		and r.nickName=#{nickName};
+	</select>
+	
+	<select id="getLikeBoard" resultType="int">
+		select count(*) from boardLike where nickName=#{nickName};
+	</select>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_jdg.dao.MybookDAO">
+
+ 	<select id="getMybookList" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+	 		<choose>
+	 			<when test="sort==0">
+			 		select * from mybooks where nickName=#{nickName} order by bookDate desc;
+	 			</when>
+	 			<when test="sort==1">
+		 			select * from mybooks where nickName=#{nickName} order by readDate desc;
+	 			</when>
+	 			<when test="sort==2">
+	 				select * from mybooks where nickName=#{nickName} order by bookName;
+	 			</when>
+	 			<otherwise>
+	 				select * from mybooks where nickName=#{nickName} order by bookAuthor;
+	 			</otherwise>
+	 		</choose>
+ 	</select>
+ 	
+ 	<select id="getBookText" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+ 		select bookText from mybooks where bookText=#{bookText} and nickName=#{nickName};
+ 	</select>
+ 	
+ 	<delete id="myBookDelete">
+ 		delete from mybooks where idx=#{idx};
+ 	</delete>
+ 	
+ 	<update id="ReadBook">
+ 		update member as m, mybooks as mb set m.point= m.point +1, mb.read='YES', mb.readDate=now() 
+ 		where m.nickName=#{nickName} and mb.bookIdx=#{bookIdx} and mb.nickName=#{nickName};
+ 	</update>
+ 	
+ 	<select id="getBookSearch" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+ 		select * from mybooks where bookIdx=#{bookIdx} and nickName=#{nickName};
+ 	</select>
+ 	
+ 	<update id="updateReadDate">
+ 		update mybooks set readDate=now() where bookIdx=#{bookIdx} and nickName=#{nickName};
+ 	</update>
+ 	
+ 	<update id="updateReadNum">
+ 		update books set readNum=readNum + 1 where bookIdx=#{bookIdx};
+ 	</update>
+ 	
+ 	<select id="getBookType" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+ 		select bookType,count(bookType) as cnt from mybooks where nickName=#{nickName} group by bookType order by cnt desc; 
+ 	</select>
+ 	
+ 	<select id="getPrimeTime" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+ 		select hour(readDate) as ptime, count(hour(readDate)) as pcnt from mybooks 
+ 		where nickName=#{nickName} group by hour(readDate) order by pcnt desc;
+ 	</select>
+ 	
+ 	<select id="getBookDate" resultType="com.spring.cjs2108_jdg.vo.MyBookVO">
+ 		select dayofweek(readDate) as bday, count(dayofweek(readDate)) as bcnt from mybooks 
+ 		where nickName=#{nickName} group by dayofweek(readDate) order by bcnt desc limit 1;
+ 	</select>
+</mapper>

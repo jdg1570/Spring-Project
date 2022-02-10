@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_jdg.dao.SearchDAO">
+
+	<select id="totRecCnt" resultType="int">
+		<if test="bookType == ''">
+			<if test="sWord == ''">
+				select count(*) from books;
+			</if>
+			<if test="sWord != ''">
+				select count(*) from books where (bookName like concat('%',#{sWord},'%')) or (bookAuthor like concat('%',#{sWord},'%'));
+			</if>
+		</if>
+		<if test="bookType != ''">
+			<if test="sWord == ''">
+				select count(*) from books where bookType = #{bookType};
+			</if>
+			<if test="sWord != ''">
+				select count(*) from books where bookType = #{bookType} in ((bookName like concat('%',#{sWord},'%')) or (bookAuthor like concat('%',#{sWord},'%')));
+			</if>
+		</if>
+	</select>
+	
+	<select id="getProductList" resultType="com.spring.cjs2108_jdg.vo.BooksVO">
+		<if test="bookType == ''">
+			<if test="sWord == ''">
+				select * from books limit #{startIndexNo},#{pageSize};
+			</if>
+			<if test="sWord != ''">
+				select * from books where (bookName like concat('%',#{sWord},'%')) or (bookAuthor like concat('%',#{sWord},'%')) order by readNum desc limit #{startIndexNo},#{pageSize};
+			</if>
+		</if>
+		<if test="bookType != ''">
+			<if test="sWord == ''">
+				select * from books where bookType=#{bookType} order by readNum desc limit #{startIndexNo},#{pageSize};
+			</if>
+			<if test="sWord != ''">
+				select * from books where bookType=#{bookType} in ((bookName like concat('%',#{sWord},'%')) or (bookAuthor like concat('%',#{sWord},'%'))) order by readNum desc limit #{startIndexNo},#{pageSize};
+			</if>
+		</if>
+	</select>
+	
+</mapper>
