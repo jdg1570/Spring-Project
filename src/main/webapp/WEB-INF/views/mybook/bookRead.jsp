@@ -18,12 +18,11 @@
 <%@ include file="/WEB-INF/views/include/bs4.jsp" %>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script> window.jQuery || document.write('<script src="booklet/jquery-2.1.0.min.js"><\/script>') </script>
-<script src="<%=request.getContextPath()%>/js/jquery.easing.1.3.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery.booklet.latest.min.js" type="text/javascript"></script>
-<link href="<%=request.getContextPath()%>/js/jquery.booklet.latest.css" type="text/css" rel="stylesheet" media="screen, projection, tv" />
+<script src="${ctp}/js/jquery.easing.1.3.js" type="text/javascript"></script>
+<script src="${ctp}/js/jquery.booklet.latest.min.js" type="text/javascript"></script>
+<link href="${ctp}/js/jquery.booklet.latest.css" type="text/css" rel="stylesheet" media="screen, projection, tv" />
 <%
 	int i = 0;
-	//List<String[]> arrays = new ArrayList<String[]>();
 	List<String> arrays = new ArrayList<String>();
 	List<String> arrays2 = new ArrayList<String>();
 	try {
