@@ -1,3 +1,6 @@
+<%@page import="java.io.File"%>
+<%@page import="java.io.InputStreamReader"%>
+<%@page import="java.io.FileInputStream"%>
 <%@page import="javax.servlet.jsp.tagext.TryCatchFinally"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
@@ -25,10 +28,12 @@
 	int i = 0;
 	List<String> arrays = new ArrayList<String>();
 	List<String> arrays2 = new ArrayList<String>();
+	
 	try {
 		String bookText = request.getParameter("bookText");
 		String filePath = application.getRealPath("/resources/data/text/")+bookText;
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
+		
 		String str ="";
 		while((str = reader.readLine()) != null) {
 		String arr[] = str.split("<br/>");

@@ -102,6 +102,7 @@ public class MybookController {
 	
 	// 책 보기 창
 	@RequestMapping(value="/bookRead",method = RequestMethod.GET)
+
 	public String bookReadGet(Model model, MyBookVO vo, String bookText, int bookIdx, HttpSession session, HttpServletRequest request) {
 		String nickName = (String) session.getAttribute("sNickName");
 		

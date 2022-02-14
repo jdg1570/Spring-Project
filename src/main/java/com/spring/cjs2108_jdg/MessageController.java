@@ -28,6 +28,10 @@ public class MessageController {
 			model.addAttribute("msg", "회원가입을 환영합니다");
 			model.addAttribute("url", "member/Login");
 		}
+		else if(msgFlag.equals("JoinError")) {
+			model.addAttribute("msg", "회원가입 오류");
+			model.addAttribute("url", "member/Login");
+		}
 		else if(msgFlag.equals("IdSearchNo")) {
 			model.addAttribute("msg", "일치하는 아이디가 없습니다.");
 			model.addAttribute("url", "member/IdSearch");

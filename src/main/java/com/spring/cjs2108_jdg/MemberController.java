@@ -7,12 +7,15 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -191,7 +194,7 @@ public class MemberController {
 	
 	// 회원가입 처리
 	@RequestMapping(value="/Join", method = RequestMethod.POST)
-	public String JoinPost(MemberVO vo) {
+	public String JoinPost(@Validated MemberVO vo, BindingResult bindingResult) {
 		if(memberService.getIdCheck(vo.getMid()) != null) {
 			msgFlag = "IdCheckNo";
 			return "redirect:/msg/" + msgFlag;
@@ -200,6 +203,7 @@ public class MemberController {
 			msgFlag = "NickCheckNo";
 			return "redirect:/msg/" + msgFlag;
 		}
+		
 		vo.setPwd(passwordEncoder.encode(vo.getPwd()));
 		int res = memberService.setJoin(vo);
 		if(res == 1) msgFlag = "JoinOk";
