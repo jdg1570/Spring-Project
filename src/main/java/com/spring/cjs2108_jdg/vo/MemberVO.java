@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class MemberVO {
 	
-	// 데이터 Validation 처리
 	private int idx;
 	private String mid;
 	private String pwd;
@@ -26,6 +25,6 @@ public class MemberVO {
 	private String lastDate;
 	
 	private int diffTime;	/* 시간 차이 */
-	private int rcnt; 	/* 총 댓글 수 */
+	private int rcnt; 		/* 총 댓글 수 */
 	
 }
